@@ -15,6 +15,15 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) =>{
   console.log('New connection start');
 
+  socket.on('createMessage', (message) =>{
+    console.log('createMessage', message);
+  });
+
+  socket.emit('newMessage', {
+    from: "Sujon",
+    text: "Video call"
+  });
+
   socket.on('disconnect', () =>{
     console.log('Disconnect from server');
   })
