@@ -2,7 +2,8 @@ const express = require('express');
 const http = require('http');
 const path = require('path');
 const socketIO = require('socket.io');
-const jade = require('jade');
+// const jade = require('jade');
+const {generateMessage} = require('./utils/message');
 
 const publicPath = path.join(__dirname, '../public');
 var port = process.env.PORT || 3000;
@@ -14,14 +15,13 @@ app.use(express.static(publicPath));
 
 io.on('connection', (socket) =>{
   console.log('New connection start');
+  socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'));
+  socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));
 
-  socket.on('createMessage', (message) =>{
+  socket.on('createMessage', (message, callback) =>{
     console.log('createMessage', message);
-  });
-
-  socket.emit('newMessage', {
-    from: "Sujon",
-    text: "Video call"
+    io.emit('newMessage', generateMessage(message.from, message.text));
+    callback('This is from the server');
   });
 
   socket.on('disconnect', () =>{

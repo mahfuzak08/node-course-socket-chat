@@ -1,18 +1,28 @@
 var socket = io();
 
 socket.on('connect', () =>{
-  console.log('New connection from browser');
-
-  socket.emit('createMessage', {
-    from: "mahfuz",
-    text: "This is index.js"
-  })
-});
-
-socket.on('newMessage', function(message) {
-  console.log("New Message ", message);
+  console.log('Connected to server');
 });
 
 socket.on('disconnect', () =>{
   console.log('Disconnect server from browser');
+});
+
+socket.on('newMessage', function(message) {
+    console.log('New Message', message);
+    var li = jQuery('<li></li>');
+    li.text(`${message.from}: ${message.text}`);
+
+    jQuery('#messages').append(li);
+});
+
+jQuery("#message-form").on('submit', function(e){
+  e.preventDefault();
+
+  socket.emit('createMessage', {
+    from: 'User',
+    text: jQuery('[name=message]').val()
+  }, function() {
+
+  });
 });
